@@ -2,14 +2,14 @@ import uuid
 
 from sqlalchemy import DateTime, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from datetime import datetime
 
 from app.database.base import Base
 
 class User(Base):
-    __tablename__ = "user"
+    __tablename__ = "users"
     
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -38,4 +38,14 @@ class User(Base):
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now()
+    )
+
+    shopping = relationship(
+        "Shopping",
+        back_populates="user",
+    )
+
+    seller = relationship(
+        "Seller",
+        back_populates="user",
     )
