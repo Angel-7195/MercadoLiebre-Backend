@@ -30,7 +30,7 @@ class Shopping(Base):
     status: Mapped[str] = mapped_column(
         String(20),
         nullable=False,
-        default="Pending"
+        default="PENDING"
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
