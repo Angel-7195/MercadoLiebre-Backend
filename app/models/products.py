@@ -10,7 +10,7 @@ from datetime import datetime
 from app.database.base import Base
 
 class Product(Base):
-    __tablename__ = "product"
+    __tablename__ = "products"
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -65,12 +65,12 @@ class Product(Base):
 
     seller = relationship(
         "Seller",
-        back_populates= "product",
+        back_populates= "products",
     )
 
     category = relationship(
         "Category",
-        back_populates= "product",
+        back_populates= "products",
     )
 
     purchase_details = relationship(

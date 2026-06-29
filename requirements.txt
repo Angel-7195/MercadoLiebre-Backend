@@ -1,14 +1,22 @@
 fastapi[standard]
-sqlalchemy >= 2.0
+uvicorn[standard]
+
+sqlalchemy>=2.0
+alembic
 asyncpg
+psycopg2-binary
+
 python-dotenv
 pydantic
+email-validator
+
 PyJWT
 bcrypt>=4.1
-alembic
+
 rich
+
+pytest
+pytest-asyncio
+
 ruff
 black
-pytest
-psycopg2-binary
-pytest-asyncio
