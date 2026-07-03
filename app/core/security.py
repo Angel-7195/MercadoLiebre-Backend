@@ -41,7 +41,7 @@ def get_access_token_expire_minutes() -> int:
 
 def _get_jwt_secret_key() -> str:
     secret = os.getenv("JWT_SECRET_KEY")
-
+    print("JWT_SECRET_KEY =", repr(secret))
     if not secret:
         raise RuntimeError(
             "JWT_SECRET_KEY no esta configurada. "
