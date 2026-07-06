@@ -11,7 +11,10 @@ def list_categories(client: APIClient) -> list[dict[str, Any]]:
     return r.json()
 
 
-def get_category(client: APIClient, category_id: str) -> dict[str, Any]:
+def get_category(
+    client: APIClient,
+    category_id: str,
+) -> dict[str, Any]:
     r = client.get(f"/api/categories/{category_id}")
     r.raise_for_status()
     return r.json()
@@ -19,17 +22,16 @@ def get_category(client: APIClient, category_id: str) -> dict[str, Any]:
 
 def create_category(
     client: APIClient,
-    *,
-    name: str,
-    description: str | None = None,
+    payload: dict[str, Any],
 ) -> dict[str, Any]:
-    data = {
-        "name": name,
-        "description": description,
-    }
 
-    r = client.post("/api/categories", json=data)
+    r = client.post(
+        "/api/categories",
+        json=payload,
+    )
+
     r.raise_for_status()
+
     return r.json()
 
 
@@ -38,11 +40,22 @@ def update_category(
     category_id: str,
     payload: dict[str, Any],
 ) -> dict[str, Any]:
-    r = client.put(f"/api/categories/{category_id}", json=payload)
+
+    r = client.put(
+        f"/api/categories/{category_id}",
+        json=payload,
+    )
+
     r.raise_for_status()
+
     return r.json()
 
 
-def delete_category(client: APIClient, category_id: str) -> None:
+def delete_category(
+    client: APIClient,
+    category_id: str,
+) -> None:
+
     r = client.delete(f"/api/categories/{category_id}")
+
     r.raise_for_status()

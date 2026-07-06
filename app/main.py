@@ -9,6 +9,8 @@ from app.crud.auth import login
 from app.crud.http_client import APIClient
 from app.crud.menu_users import users_menu
 from app.crud.menu_sellers import sellers_menu
+from app.crud.menu_categories import categories_menu
+from app.crud.menu_products import products_menu
 from app.utils.cli_utils import clear_screen, pause
 
 console = Console()
@@ -62,9 +64,9 @@ def main() -> None:
             elif op == "1":
                 sellers_menu(client)
             elif op == "2":
-                pass
+                categories_menu(client)
             elif op == "3":
-                pass
+                products_menu(client)
             elif op == "4":
                 pass
             elif op == "5":

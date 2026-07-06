@@ -19,32 +19,16 @@ def get_product(client: APIClient, product_id: str) -> dict[str, Any]:
 
 def create_product(
     client: APIClient,
-    *,
-    seller_id: str,
-    category_id: str,
-    name: str,
-    description: str | None = None,
-    brand: str | None = None,
-    price: float | None = None,
-    stock: int | None = None,
-    status: str | None = None,
-    image_url: str | None = None,
+    payload: dict[str, Any],
 ) -> dict[str, Any]:
+
     r = client.post(
         "/api/products",
-        json={
-            "seller_id": seller_id,
-            "category_id": category_id,
-            "name": name,
-            "description": description,
-            "brand": brand,
-            "price": price,
-            "stock": stock,
-            "status": status,
-            "image_url": image_url,
-        },
+        json=payload,
     )
+
     r.raise_for_status()
+
     return r.json()
 
 
