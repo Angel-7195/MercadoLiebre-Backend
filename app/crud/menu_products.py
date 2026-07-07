@@ -16,13 +16,6 @@ from app.crud.products import (
 from app.crud.http_client import APIClient
 from app.utils.cli_utils import clear_screen, pause, print_table
 from app.utils.menu_utils import pick_from_list
-from decimal import Decimal
-
-console = Console()
-
-from app.crud.http_client import APIClient
-from app.utils.cli_utils import clear_screen, pause, print_table
-from app.utils.menu_utils import pick_from_list
 from app.crud.sellers import list_sellers
 from app.crud.categories import list_categories
 
@@ -121,7 +114,8 @@ def products_menu(client: APIClient) -> None:
                         "category_id": "Category ID",
                         "created_at": "Created At"
                     },
-                    title="Product"
+                    title="Product",
+                    empty_message="No product found"
                 )
 
                 pause()

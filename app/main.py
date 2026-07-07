@@ -11,6 +11,7 @@ from app.crud.menu_users import users_menu
 from app.crud.menu_sellers import sellers_menu
 from app.crud.menu_categories import categories_menu
 from app.crud.menu_products import products_menu
+from app.crud.menu_shopping import shopping_menu
 from app.utils.cli_utils import clear_screen, pause
 
 console = Console()
@@ -68,7 +69,7 @@ def main() -> None:
             elif op == "3":
                 products_menu(client)
             elif op == "4":
-                pass
+                shopping_menu(client)
             elif op == "5":
                 users_menu(client)
             elif op == "6":
