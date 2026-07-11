@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class PurchaseDetailBase(BaseModel):
-    shopping_id: UUID
+    order_id: UUID
     product_id: UUID
     quantity: int = Field(ge=1)
     unit_price: Decimal = Field(gt=0)
@@ -16,8 +16,9 @@ class PurchaseDetailBase(BaseModel):
 class PurchaseDetailCreate(PurchaseDetailBase):
     pass
 
-
 class PurchaseDetailUpdate(BaseModel):
+    order_id: UUID | None = None
+    product_id: UUID | None = None
     quantity: int | None = Field(default=None, ge=1)
     unit_price: Decimal | None = Field(default=None, gt=0)
     subtotal: Decimal | None = Field(default=None, ge=0)

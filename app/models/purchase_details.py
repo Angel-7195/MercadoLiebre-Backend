@@ -17,9 +17,9 @@ class PurchaseDetail(Base):
         default=uuid.uuid4,
         primary_key=True
     )
-    shopping_id: Mapped[uuid.UUID] = mapped_column(
+    order_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("shopping.id"),
+        ForeignKey("orders.id"),
         nullable=False,
     )
     product_id: Mapped[uuid.UUID] = mapped_column(
@@ -46,8 +46,8 @@ class PurchaseDetail(Base):
         server_default=func.now(),
         nullable=False,
     )
-    shopping = relationship(
-        "Shopping",
+    order = relationship(
+        "Order",
         back_populates="purchase_details"
     )
     product = relationship(

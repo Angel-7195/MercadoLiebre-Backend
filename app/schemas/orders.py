@@ -2,21 +2,21 @@ from datetime import datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 
-class ShoppingBase(BaseModel):
+class OrderBase(BaseModel):
     user_id: UUID
     total_amount: Decimal = Field(default=0)
     status: str = Field(default="PENDING")
 
-class ShoppingCreate(ShoppingBase):
+class OrderCreate(OrderBase):
     pass
 
-class ShoppingUpdate(BaseModel):
+class OrderUpdate(BaseModel):
     total_amount: Decimal | None = None
     status: str | None = None
 
-class ShoppingRead(ShoppingBase):
+class OrderRead(OrderBase):
     id: UUID
     created_at: datetime
 

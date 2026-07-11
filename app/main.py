@@ -11,7 +11,8 @@ from app.crud.menu_users import users_menu
 from app.crud.menu_sellers import sellers_menu
 from app.crud.menu_categories import categories_menu
 from app.crud.menu_products import products_menu
-from app.crud.menu_shopping import shopping_menu
+from app.crud.menu_orders import orders_menu
+from app.crud.menu_purchaseDetails import purchaseDetails_menu
 from app.utils.cli_utils import clear_screen, pause
 
 console = Console()
@@ -52,7 +53,7 @@ def main() -> None:
             console.print("1. Sellers")
             console.print("2. Categories")
             console.print("3. Products")
-            console.print("4. Shopping Cart")
+            console.print("4. Orders")
             console.print("5. Users")
             console.print("6. Purchase Details")
             console.print("0. Exit\n")
@@ -69,11 +70,11 @@ def main() -> None:
             elif op == "3":
                 products_menu(client)
             elif op == "4":
-                shopping_menu(client)
+                orders_menu(client)
             elif op == "5":
                 users_menu(client)
             elif op == "6":
-                pass
+                purchaseDetails_menu(client)
 
     finally:
         client.close()

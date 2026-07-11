@@ -87,8 +87,8 @@ class User(Base):
     # Relación uno a muchos:
     # Un usuario puede realizar múltiples compras.
     # -------------------------------------------------------------------------
-    shopping = relationship(
-        "Shopping",
+    orders = relationship(
+        "Order",
         back_populates="user",
     )
 
