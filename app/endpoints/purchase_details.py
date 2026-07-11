@@ -48,7 +48,7 @@ async def create_purchase_detail(
     db: AsyncSession = Depends(get_db),
 ) -> PurchaseDetail:
     purchase_detail = PurchaseDetail(
-        shopping_id=payload.shopping_id,
+        order_id=payload.order_id,
         product_id=payload.product_id,
         quantity=payload.quantity,
         unit_price=payload.unit_price,

@@ -5,12 +5,12 @@ from typing import Any
 import httpx
 from rich.console import Console
 
-from app.crud.shopping import(
-    create_shopping,
-    delete_shopping,
-    get_shopping,
-    list_shopping,
-    update_shopping,
+from app.crud.orders import(
+    create_order,
+    delete_order,
+    get_order,
+    list_orders,
+    update_order,
 )
 
 from app.crud.http_client import APIClient
@@ -30,18 +30,18 @@ def _handle_http_error(exc: Exception) -> None:
     else:
         console.print(f"\n[red]Error[/red]: {exc}\n")
 
-def shopping_menu(client: APIClient) -> None:
+def orders_menu(client: APIClient) -> None:
     payload: dict[str, Any]
 
     while True:
 
         clear_screen()
-        console.print("=== MENU SHOPPING CART ===\n")
-        console.print("1. List Shopping")
-        console.print("2. Get Shopping")
-        console.print("3. Create Shopping")
-        console.print("4. Update Shopping")
-        console.print("5. Delete Shopping")
+        console.print("=== MENU ORDERS ===\n")
+        console.print("1. List Orders")
+        console.print("2. Get Order")
+        console.print("3. Create Order")
+        console.print("4. Update Order")
+        console.print("5. Delete Order")
         console.print("0. Back to Main Menu")
         console.print("---------------------\n")
 
@@ -52,7 +52,7 @@ def shopping_menu(client: APIClient) -> None:
                 return
             elif op == "1":
                 
-                rows = list_shopping(client)
+                rows = list_orders(client)
 
                 users = list_users(client)
 
@@ -67,22 +67,22 @@ def shopping_menu(client: APIClient) -> None:
                 print_table(
                     rows,
                     columns={
-                        "user_id": "User",
-                        "total_amount": "Total amount",
+                        "user_name": "User",
+                        "total_amount": "Total Amount",
                         "status": "Status",
                         "created_at": "Created at",
                     },
-                    title="Shopping Carts",
-                    empty_message="No shopping carts found",
+                    title="Orders",
+                    empty_message="No orders found",
                 )
 
                 pause()
             elif op == "2":
 
-                rows = list_shopping(client)
+                rows = list_orders(client)
 
                 if not rows:
-                    console.print("No shopping carts found.")
+                    console.print("No orders found.")
                     pause()
                     continue
 
@@ -97,7 +97,7 @@ def shopping_menu(client: APIClient) -> None:
 
                 picked = pick_from_list(
                     rows,
-                    title="Select a Shopping cart:",
+                    title="Select an Order:",
                     display=lambda s: (
                         f"{users_map.get(s['user_id'], 'Unknown')} | {s['status']}"
                     ),
@@ -106,31 +106,31 @@ def shopping_menu(client: APIClient) -> None:
                 if not picked:
                     continue
 
-                shopping = get_shopping(client, picked["id"])
+                order = get_order(client, picked["id"])
 
                 # Agregar el nombre del usuario al registro
-                shopping["user_name"] = users_map.get(
-                    shopping["user_id"],
+                order["user_name"] = users_map.get(
+                    order["user_id"],
                     "Unknown"
                 )
 
                 print_table(
-                    [shopping],
+                    [order],
                     columns={
                         "user_name": "User",
                         "total_amount": "Total Amount",
                         "status": "Status",
                         "created_at": "Created At",
                     },
-                    title="Shopping Cart",
-                    empty_message="No shopping cart found.",
+                    title="Orders",
+                    empty_message="No orders found.",
                 )
 
                 pause()
 
             elif op == "3":
                 clear_screen()
-                console.print("=== Create Shopping Cart===")
+                console.print("=== Create Order ===")
 
                 users = list_users(client)
 
@@ -154,10 +154,10 @@ def shopping_menu(client: APIClient) -> None:
 
                 console.print(f"\nSelected user: {picked_user['full_name']}\n")
 
-                total_amount = input("Total Amount: ").strip() or "PENDING"
-                status = input("Status [PENDING]: ").strip().upper()
+                total_amount = input("Total Amount [0]: ").strip() or "0"
+                status = input("Status [PENDING]: ").strip().upper() or "PENDING"
 
-                created = create_shopping(
+                created = create_order(
                     client,
                     user_id=user_id,
                     total_amount=total_amount,
@@ -165,17 +165,17 @@ def shopping_menu(client: APIClient) -> None:
                 )
 
                 console.print(
-                    f"\nShopping cart created successfully: {created['total_amount']} ({created['id']})\n"
+                    f"\nOrder created successfully: {created['total_amount']} ({created['id']})\n"
                 )
 
                 pause()
 
             elif op == "4":
 
-                rows = list_shopping(client)
+                rows = list_orders(client)
 
                 if not rows:
-                    console.print("No shopping carts found")
+                    console.print("No orders found")
                     pause()
                     continue
 
@@ -188,7 +188,7 @@ def shopping_menu(client: APIClient) -> None:
                 
                 picked = pick_from_list(
                     rows,
-                    title="Select the shopping to update:",
+                    title="Select the order to update:",
                     display=lambda s: (
                         f"{users_map.get(s['user_id'], 'Unknown')} | {s['status']}"
                     ),
@@ -197,10 +197,10 @@ def shopping_menu(client: APIClient) -> None:
                 if not picked:
                     continue
 
-                current = get_shopping(client, picked["id"])
+                current = get_order(client, picked["id"])
 
                 clear_screen()
-                console.print("=== Update Shopping cart ===\n")
+                console.print("=== Update Order ===\n")
                 console.print("Leave empty to keep current value.\n")
 
                 total_amount = input(
@@ -222,29 +222,29 @@ def shopping_menu(client: APIClient) -> None:
                     pause()
                     continue
 
-                updated = update_shopping(
+                updated = update_order(
                     client,
                     picked["id"],
                     payload,
                 )
 
                 console.print(
-                    f"\nShopping cart updated {updated['total_amount']} ({updated['id']})\n"
+                    f"\nOrder updated {updated['total_amount']} ({updated['id']})\n"
                 )
 
                 pause()
             elif op == "5":
 
-                rows = list_shopping(client)
+                rows = list_orders(client)
 
                 if not rows:
-                    console.print("No shopping cart found")
+                    console.print("No order found")
                     pause()
                     continue
 
                 picked = pick_from_list(
                     rows,
-                    title="Select the shopping to delete",
+                    title="Select the order to delete",
                     display=lambda s: (
                         f"{s['total_amount']} | {s['status']}"
                     )
@@ -255,7 +255,7 @@ def shopping_menu(client: APIClient) -> None:
 
                 confirm = (
                     input(
-                        f"Delete shopping '{picked['total_amount']}'? (y/N): "
+                        f"Delete order '{picked['total_amount']}'? (y/N): "
                     )
                     .strip()
                     .lower()
@@ -264,9 +264,9 @@ def shopping_menu(client: APIClient) -> None:
                 if confirm != "y":
                     continue
 
-                delete_shopping(client, picked["id"])
+                delete_order(client, picked["id"])
 
-                console.print("\nShopping deleted succesfully")
+                console.print("\nOrder deleted successfully")
 
                 pause()
 

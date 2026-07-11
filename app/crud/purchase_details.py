@@ -22,23 +22,14 @@ def get_purchase_detail(
 
 def create_purchase_detail(
     client: APIClient,
-    *,
-    shopping_id: str,
-    product_id: str,
-    quantity: int,
-    unit_price: float,
-    subtotal: float,
+    payload: dict[str, Any],
 ) -> dict[str, Any]:
+
     response = client.post(
         "/api/purchase_details",
-        json={
-            "shopping_id": shopping_id,
-            "product_id": product_id,
-            "quantity": quantity,
-            "unit_price": unit_price,
-            "subtotal": subtotal,
-        },
+        json=payload,
     )
+
     response.raise_for_status()
     return response.json()
 
@@ -48,10 +39,12 @@ def update_purchase_detail(
     purchase_detail_id: str,
     payload: dict[str, Any],
 ) -> dict[str, Any]:
+
     response = client.put(
         f"/api/purchase_details/{purchase_detail_id}",
         json=payload,
     )
+
     response.raise_for_status()
     return response.json()
 
@@ -60,5 +53,6 @@ def delete_purchase_detail(
     client: APIClient,
     purchase_detail_id: str,
 ) -> None:
+
     response = client.delete(f"/api/purchase_details/{purchase_detail_id}")
     response.raise_for_status()
