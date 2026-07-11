@@ -5,19 +5,19 @@ from typing import Any
 from app.crud.http_client import APIClient
 
 
-def list_shopping(client: APIClient) -> list[dict[str, Any]]:
-    response = client.get("/api/shopping")
+def list_orders(client: APIClient) -> list[dict[str, Any]]:
+    response = client.get("/api/orders")
     response.raise_for_status()
     return response.json()
 
 
-def get_shopping(client: APIClient, shopping_id: str) -> dict[str, Any]:
-    response = client.get(f"/api/shopping/{shopping_id}")
+def get_order(client: APIClient, order_id: str) -> dict[str, Any]:
+    response = client.get(f"/api/orders/{order_id}")
     response.raise_for_status()
     return response.json()
 
 
-def create_shopping(
+def create_order(
     client: APIClient,
     *,
     user_id: str,
@@ -25,7 +25,7 @@ def create_shopping(
     status: str,
 ) -> dict[str, Any]:
     response = client.post(
-        "/api/shopping",
+        "/api/orders",
         json={
             "user_id": user_id,
             "total_amount": total_amount,
@@ -36,16 +36,16 @@ def create_shopping(
     return response.json()
 
 
-def update_shopping(
+def update_order(
     client: APIClient,
-    shopping_id: str,
+    order_id: str,
     payload: dict[str, Any],
 ) -> dict[str, Any]:
-    response = client.put(f"/api/shopping/{shopping_id}", json=payload)
+    response = client.put(f"/api/orders/{order_id}", json=payload)
     response.raise_for_status()
     return response.json()
 
 
-def delete_shopping(client: APIClient, shopping_id: str) -> None:
-    response = client.delete(f"/api/shopping/{shopping_id}")
+def delete_order(client: APIClient, order_id: str) -> None:
+    response = client.delete(f"/api/orders/{order_id}")
     response.raise_for_status()
