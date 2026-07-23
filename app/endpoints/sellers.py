@@ -3,11 +3,14 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import HTTPException
 
 from app.core.exceptions import NotFoundError
 from app.database.session import get_db
 from app.models.sellers import Seller
 from app.schemas.sellers import SellerCreate, SellerRead, SellerUpdate
+from app.core.security import get_current_user
+from app.models.users import User
 
 router = APIRouter(prefix="/api/sellers", tags=["sellers"])
 
@@ -34,10 +37,22 @@ async def get_seller(
 @router.post("", response_model=SellerRead, status_code=status.HTTP_201_CREATED)
 async def create_seller(
     payload: SellerCreate,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Seller:
+
+    existing_seller = await db.execute(
+        select(Seller).where(Seller.user_id == current_user.id)
+    )
+
+    if existing_seller.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User already has a seller profile"
+        )
+
     seller = Seller(
-        user_id=payload.user_id,
+        user_id=current_user.id,
         document_number=payload.document_number,
         store_name=payload.store_name,
         phone=payload.phone,
