@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.core import cloudinary_config
 from app.core.handlers import register_error_handlers
 from app.core.security import get_current_user
 from app.endpoints.categories import router as categories_router
