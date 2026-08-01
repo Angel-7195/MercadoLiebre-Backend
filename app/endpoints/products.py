@@ -5,8 +5,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import NotFoundError
+from app.core.security import get_current_user
 from app.database.session import get_db
 from app.models.products import Product
+from app.models.sellers import Seller
+from app.models.users import User
 from app.schemas.products import ProductCreate, ProductRead, ProductUpdate
 
 router = APIRouter(prefix="/api/products", tags=["products"])
@@ -17,6 +20,30 @@ async def list_products(
     db: AsyncSession = Depends(get_db),
 ) -> list[Product]:
     result = await db.execute(select(Product).order_by(Product.created_at.desc()))
+    return list(result.scalars().all())
+
+
+@router.get("/my-products", response_model=list[ProductRead])
+async def list_my_products(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[Product]:
+
+    seller = await db.scalar(
+        select(Seller).where(
+            Seller.user_id == current_user.id
+        )
+    )
+
+    if not seller:
+        raise NotFoundError("Seller profile not found")
+
+    result = await db.execute(
+        select(Product)
+        .where(Product.seller_id == seller.id)
+        .order_by(Product.created_at.desc())
+    )
+
     return list(result.scalars().all())
 
 
@@ -36,23 +63,35 @@ async def get_product(
 @router.post("", response_model=ProductRead, status_code=status.HTTP_201_CREATED)
 async def create_product(
     payload: ProductCreate,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Product:
+
+    seller = await db.scalar(
+        select(Seller).where(
+            Seller.user_id == current_user.id
+        )
+    )
+
+    if not seller:
+        raise NotFoundError("Seller profile not found")
+    
     product = Product(
-        seller_id=payload.seller_id,
+        seller_id=seller.id,
         category_id=payload.category_id,
         name=payload.name,
         description=payload.description,
         brand=payload.brand,
         price=payload.price,
         stock=payload.stock,
-        status=payload.status,
+        status="ACTIVE",
         image_url=payload.image_url,
     )
-
+    
     db.add(product)
     await db.commit()
     await db.refresh(product)
+    
 
     return product
 
@@ -61,12 +100,25 @@ async def create_product(
 async def update_product(
     product_id: UUID,
     payload: ProductUpdate,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> Product:
     product = await db.get(Product, product_id)
 
     if not product:
         raise NotFoundError("Product not found")
+
+    seller = await db.scalar(
+        select(Seller).where(
+            Seller.user_id == current_user.id
+        )
+    )
+
+    if not seller:
+        raise NotFoundError("Seller profile not found")
+
+    if product.seller_id != seller.id:
+        raise NotFoundError("You are not allowed to edit this product")
 
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(product, field, value)
@@ -80,12 +132,25 @@ async def update_product(
 @router.delete("/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
     product_id: UUID,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> None:
     product = await db.get(Product, product_id)
 
     if not product:
         raise NotFoundError("Product not found")
+
+    seller = await db.scalar(
+        select(Seller).where(
+            Seller.user_id == current_user.id
+        )
+    )
+
+    if not seller:
+        raise NotFoundError("Seller profile not found")
+
+    if product.seller_id != seller.id:
+        raise NotFoundError("You are not allowed to delete this product")
 
     await db.delete(product)
     await db.commit()
