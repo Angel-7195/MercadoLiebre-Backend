@@ -14,6 +14,7 @@ from app.endpoints.sellers import router as sellers_router
 from app.endpoints.orders import router as orders_router
 from app.endpoints.users import router as users_router
 from app.endpoints.auth import router as auth_router
+from app.endpoints.uploads import router as uploads_router
 
 load_dotenv()
 
@@ -47,6 +48,7 @@ app.include_router(products_router)
 app.include_router(orders_router)
 app.include_router(purchase_details_router)
 app.include_router(auth_router)
+app.include_router(uploads_router)
 
 
 @app.get("/health")
